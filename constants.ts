@@ -1,5 +1,5 @@
 
-import { BlogPost, DaeProgram, EuroPortalMapping } from './types';
+import { BlogPost, DaeProgram, EuroPortalMapping, JobListing } from './types';
 
 export const MOCK_POSTS: BlogPost[] = [
   {
@@ -110,4 +110,51 @@ export const ABROAD_PORTALS: EuroPortalMapping[] = [
   { country: "Denmark", portal: "læreplads.dk", description: "Danish apprenticeship matching portal", flag: "🇩🇰" },
   { country: "Italy", portal: "ANPAL", description: "Italian National Agency for Active Labor Policies", flag: "🇮🇹" },
   { country: "Spain", portal: "todofp.es", description: "Official Spanish portal for vocational training", flag: "🇪🇸" },
+];
+
+export const MOCK_JOBS: JobListing[] = [
+  {
+    id: 'j1',
+    title: 'Electrical Maintenance Engineer',
+    company: 'Lucky Cement Limited',
+    location: 'Karachi, Pakistan',
+    description: 'Responsible for maintaining electrical systems, troubleshooting PLC controls, and ensuring minimum downtime in production lines.',
+    postedDate: '2 days ago',
+    type: 'Full-time',
+    salary: 'PKR 80k - 120k',
+    logo: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=100'
+  },
+  {
+    id: 'j2',
+    title: 'Junior Mechanical Technician',
+    company: 'Engro Fertilizers',
+    location: 'Daharki, Sindh',
+    description: 'Assist in the overhaul of rotating equipment, pumps, and compressors. Knowledge of technical drawings is required.',
+    postedDate: '1 week ago',
+    type: 'Full-time',
+    salary: 'PKR 60k - 90k',
+    logo: 'https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?auto=format&fit=crop&q=80&w=100'
+  },
+  {
+    id: 'j3',
+    title: 'Solar System Installer',
+    company: 'Reon Energy',
+    location: 'Lahore, Pakistan',
+    description: 'Installation and commissioning of industrial-scale solar PV systems. DAE Electrical or Electronics preferred.',
+    postedDate: '3 days ago',
+    type: 'Contract',
+    salary: 'PKR 50k - 70k',
+    logo: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=100'
+  },
+  {
+    id: 'j4',
+    title: 'HVAC Supervisor',
+    company: 'Al-Futtaim Engineering',
+    location: 'Dubai, UAE',
+    description: 'Oversee HVAC maintenance teams for large commercial complexes. Must have DAE HVAC and 5 years experience.',
+    postedDate: '5 days ago',
+    type: 'Full-time',
+    salary: 'AED 5k - 8k',
+    logo: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&q=80&w=100'
+  }
 ];

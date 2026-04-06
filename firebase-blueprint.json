@@ -1,0 +1,67 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and settings",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "photoURL": { "type": "string", "format": "uri" },
+        "role": { "type": "string", "enum": ["admin", "student", "employer"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "JobListing": {
+      "title": "Job Listing",
+      "description": "A job opening posted on the platform",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "company": { "type": "string" },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "postedDate": { "type": "string" },
+        "type": { "type": "string", "enum": ["Full-time", "Part-time", "Contract", "Internship"] },
+        "salary": { "type": "string" },
+        "link": { "type": "string", "format": "uri" },
+        "logo": { "type": "string", "format": "uri" },
+        "authorUid": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "company", "location", "description", "type", "authorUid"]
+    },
+    "BlogPost": {
+      "title": "Blog Post",
+      "description": "An article or update",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "date": { "type": "string" },
+        "category": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "image": { "type": "string", "format": "uri" },
+        "authorUid": { "type": "string" }
+      },
+      "required": ["title", "excerpt", "category", "authorUid"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "User profile documents"
+    },
+    "/jobs/{jobId}": {
+      "schema": "JobListing",
+      "description": "Job listings collection"
+    },
+    "/posts/{postId}": {
+      "schema": "BlogPost",
+      "description": "Blog posts collection"
+    }
+  }
+}

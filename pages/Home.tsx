@@ -3,15 +3,19 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Newsletter from '../components/Newsletter';
 import PostCard from '../components/PostCard';
-import { MOCK_POSTS, DAE_PROGRAMS, TECHNICAL_BOARDS } from '../constants';
+import JobCard from '../components/JobCard';
+import { MOCK_POSTS, DAE_PROGRAMS, TECHNICAL_BOARDS, MOCK_JOBS } from '../constants';
 import { 
   ArrowRight, Briefcase, GraduationCap, Bot, Sparkles, Search, 
   Brain, Globe, Zap, ChevronRight, Landmark, ShieldCheck, 
-  Users, Star, ExternalLink, Cpu, LayoutDashboard, Terminal, Eye
+  Users, Star, ExternalLink, Cpu, LayoutDashboard, Terminal, Eye,
+  Building2, MapPin, Clock
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Home: React.FC = () => {
   const recentPosts = [...MOCK_POSTS].sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 3);
+  const featuredJobs = MOCK_JOBS.slice(0, 3);
   const topTechnologies = ["Electrical", "Mechanical", "Civil", "Electronics", "CIT", "Mechatronics"];
 
   return (
@@ -137,7 +141,28 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. VISUALIZATION SECTION */}
+      {/* 4. FEATURED JOBS SECTION */}
+      <section className="py-32 bg-slate-50">
+        <div className="container mx-auto px-4 max-w-6xl">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <div className="inline-block px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">New Openings</div>
+                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Featured <span className="text-emerald-600">Jobs</span> for DAE</h2>
+                </div>
+                <Link to="/jobs" className="group flex items-center gap-2 text-slate-900 font-black text-[10px] uppercase tracking-widest hover:text-emerald-600 transition-colors">
+                    Browse All Jobs <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {featuredJobs.map((job, index) => (
+                    <JobCard key={job.id} job={job} index={index} />
+                ))}
+            </div>
+        </div>
+      </section>
+
+      {/* 5. VISUALIZATION SECTION */}
       <section className="py-32 bg-slate-950 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>
         <div className="container mx-auto px-4 max-w-6xl">

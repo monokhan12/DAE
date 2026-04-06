@@ -1,0 +1,153 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {uid}
+    // Fields:
+    //   - uid: string (required) - Firebase Auth UID
+    //   - displayName: string (optional)
+    //   - email: string (required, email format)
+    //   - photoURL: string (optional, uri format)
+    //   - role: string (required, enum: admin, student, employer)
+    //   - createdAt: timestamp (optional)
+    //   - updatedAt: timestamp (optional)
+    //
+    // Collection: jobs
+    // Document ID: {jobId}
+    // Fields:
+    //   - title: string (required, max 100)
+    //   - company: string (required, max 100)
+    //   - location: string (required, max 100)
+    //   - description: string (required, max 5000)
+    //   - postedDate: string (optional)
+    //   - type: string (required, enum: Full-time, Part-time, Contract, Internship)
+    //   - salary: string (optional, max 50)
+    //   - link: string (optional, uri format)
+    //   - logo: string (optional, uri format)
+    //   - authorUid: string (required)
+    //   - createdAt: timestamp (optional)
+    //
+    // Collection: posts
+    // Document ID: {postId}
+    // Fields:
+    //   - title: string (required, max 200)
+    //   - excerpt: string (required, max 500)
+    //   - date: string (optional)
+    //   - category: string (required)
+    //   - tags: list (optional, max 10 strings)
+    //   - image: string (optional, uri format)
+    //   - authorUid: string (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "quanticschool@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidEmail(email) {
+      return email is string &&
+        email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidUrl(url) {
+      return url is string &&
+        (url.matches("^https://.*") || url.matches("^http://.*"));
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidUser(data) {
+      return hasRequiredFields(['uid', 'email', 'role']) &&
+        data.uid is string && data.uid == request.auth.uid &&
+        data.email is string && isValidEmail(data.email) &&
+        data.role in ['admin', 'student', 'employer'] &&
+        (!('displayName' in data) || (data.displayName is string && data.displayName.size() < 100)) &&
+        (!('photoURL' in data) || (data.photoURL is string && isValidUrl(data.photoURL)));
+    }
+
+    function isValidJob(data) {
+      return hasRequiredFields(['title', 'company', 'location', 'description', 'type', 'authorUid']) &&
+        data.title is string && data.title.size() > 0 && data.title.size() <= 100 &&
+        data.company is string && data.company.size() > 0 && data.company.size() <= 100 &&
+        data.location is string && data.location.size() > 0 && data.location.size() <= 100 &&
+        data.description is string && data.description.size() > 0 && data.description.size() <= 5000 &&
+        data.type in ['Full-time', 'Part-time', 'Contract', 'Internship'] &&
+        data.authorUid is string && data.authorUid == request.auth.uid &&
+        (!('salary' in data) || (data.salary is string && data.salary.size() <= 50)) &&
+        (!('link' in data) || (data.link is string && isValidUrl(data.link))) &&
+        (!('logo' in data) || (data.logo is string && isValidUrl(data.logo)));
+    }
+
+    function isValidPost(data) {
+      return hasRequiredFields(['title', 'excerpt', 'category', 'authorUid']) &&
+        data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+        data.excerpt is string && data.excerpt.size() > 0 && data.excerpt.size() <= 500 &&
+        data.category is string && data.category.size() > 0 && data.category.size() <= 50 &&
+        data.authorUid is string && data.authorUid == request.auth.uid &&
+        (!('tags' in data) || (data.tags is list && data.tags.size() <= 10)) &&
+        (!('image' in data) || (data.image is string && isValidUrl(data.image) && data.image.size() <= 500));
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && 
+        ((isOwner(userId) && request.resource.data.role != 'admin') || isAdmin());
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) && 
+        ((isOwner(userId) && request.resource.data.role == resource.data.role) || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /jobs/{jobId} {
+      allow read: if true; // Jobs are public
+      allow create: if isAuthenticated() && isValidJob(request.resource.data);
+      allow update: if isAuthenticated() && isValidJob(request.resource.data) && 
+        (resource.data.authorUid == request.auth.uid || isAdmin());
+      allow delete: if isAuthenticated() && (resource.data.authorUid == request.auth.uid || isAdmin());
+    }
+
+    match /posts/{postId} {
+      allow read: if true; // Posts are public
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Default deny
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

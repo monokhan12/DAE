@@ -98,3 +98,16 @@ export interface Course {
   rating: number;
   enrolledCount: number;
 }
+
+export interface JobListing {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  description: string;
+  postedDate: string;
+  type: 'Full-time' | 'Part-time' | 'Contract' | 'Internship';
+  salary?: string;
+  link?: string;
+  logo?: string;
+}

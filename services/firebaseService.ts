@@ -1,7 +1,7 @@
 
-import { initializeApp } from "firebase/app";
 import { 
-  getAuth, 
+  auth as firebaseAuth, 
+  db as firestore, 
   signInWithPopup, 
   GoogleAuthProvider, 
   signOut, 
@@ -9,10 +9,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
-  User
-} from "firebase/auth";
-import { 
-  getFirestore, 
+  User,
   doc, 
   setDoc, 
   getDoc, 
@@ -24,25 +21,11 @@ import {
   arrayUnion,
   Timestamp,
   addDoc,
-  deleteDoc
-} from "firebase/firestore";
+  deleteDoc,
+  handleFirestoreError,
+  OperationType
+} from "../firebase";
 import { CvRoadmap } from "../types";
-
-// Firebase configuration from environment variables
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
-};
-
-// Initialize Firebase only if API key is present
-const isFirebaseConfigured = !!firebaseConfig.apiKey;
-const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null;
-const firebaseAuth = app ? getAuth(app) : null;
-const firestore = app ? getFirestore(app) : null;
 
 // Mock Authentication State (Fallback)
 const AUTH_KEY = 'j4d_auth_user';
@@ -72,42 +55,40 @@ class MockAuth {
   private currentUser: MockUser | null = null;
 
   constructor() {
-    if (!isFirebaseConfigured) {
-      const saved = localStorage.getItem(AUTH_KEY);
-      if (saved) this.currentUser = JSON.parse(saved);
-    } else if (firebaseAuth) {
-      onAuthStateChanged(firebaseAuth, async (user) => {
-        if (user) {
-          const mappedUser: MockUser = {
-            uid: user.uid,
-            displayName: user.displayName || 'User',
-            email: user.email || '',
-            photoURL: user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`
-          };
-          this.currentUser = mappedUser;
-          
-          // Ensure user profile exists in Firestore
-          if (firestore) {
-            const userRef = doc(firestore, 'users', user.uid);
-            const userSnap = await getDoc(userRef);
-            if (!userSnap.exists()) {
-              await setDoc(userRef, {
-                ...mappedUser,
-                createdAt: Timestamp.now(),
-                enrolledCourses: [],
-                completedLessons: [],
-                skills: []
-              });
-            }
+    onAuthStateChanged(firebaseAuth, async (user) => {
+      if (user) {
+        const mappedUser: MockUser = {
+          uid: user.uid,
+          displayName: user.displayName || 'User',
+          email: user.email || '',
+          photoURL: user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`
+        };
+        this.currentUser = mappedUser;
+        
+        // Ensure user profile exists in Firestore
+        const userRef = doc(firestore, 'users', user.uid);
+        try {
+          const userSnap = await getDoc(userRef);
+          if (!userSnap.exists()) {
+            await setDoc(userRef, {
+              ...mappedUser,
+              role: 'student',
+              createdAt: Timestamp.now(),
+              enrolledCourses: [],
+              completedLessons: [],
+              skills: []
+            });
           }
-          
-          this.notify();
-        } else {
-          this.currentUser = null;
-          this.notify();
+        } catch (error) {
+          handleFirestoreError(error, OperationType.GET, `users/${user.uid}`);
         }
-      });
-    }
+        
+        this.notify();
+      } else {
+        this.currentUser = null;
+        this.notify();
+      }
+    });
   }
 
   onAuthStateChanged(callback: (user: MockUser | null) => void) {
@@ -119,8 +100,8 @@ class MockAuth {
   }
 
   async signInWithGoogle() {
-    if (isFirebaseConfigured && firebaseAuth) {
-      const provider = new GoogleAuthProvider();
+    const provider = new GoogleAuthProvider();
+    try {
       const result = await signInWithPopup(firebaseAuth, provider);
       const user = result.user;
       const mappedUser: MockUser = {
@@ -132,23 +113,14 @@ class MockAuth {
       this.currentUser = mappedUser;
       this.notify();
       return { user: mappedUser };
+    } catch (error) {
+      console.error('Google Sign In Error:', error);
+      throw error;
     }
-
-    // Simulate Google Login (Mock)
-    const mockUser: MockUser = {
-      uid: 'mock_user_123',
-      displayName: 'DAE Student',
-      email: 'student@example.com',
-      photoURL: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'
-    };
-    this.currentUser = mockUser;
-    localStorage.setItem(AUTH_KEY, JSON.stringify(mockUser));
-    this.notify();
-    return { user: mockUser };
   }
 
   async signUpWithEmail(email: string, pass: string, name: string) {
-    if (isFirebaseConfigured && firebaseAuth) {
+    try {
       const result = await createUserWithEmailAndPassword(firebaseAuth, email, pass);
       await updateProfile(result.user, { displayName: name });
       const user = result.user;
@@ -161,23 +133,14 @@ class MockAuth {
       this.currentUser = mappedUser;
       this.notify();
       return { user: mappedUser };
+    } catch (error) {
+      console.error('Email Sign Up Error:', error);
+      throw error;
     }
-    
-    // Mock Signup
-    const mockUser: MockUser = {
-      uid: 'mock_' + Date.now(),
-      displayName: name,
-      email: email,
-      photoURL: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`
-    };
-    this.currentUser = mockUser;
-    localStorage.setItem(AUTH_KEY, JSON.stringify(mockUser));
-    this.notify();
-    return { user: mockUser };
   }
 
   async signInWithEmail(email: string, pass: string) {
-    if (isFirebaseConfigured && firebaseAuth) {
+    try {
       const result = await signInWithEmailAndPassword(firebaseAuth, email, pass);
       const user = result.user;
       const mappedUser: MockUser = {
@@ -189,27 +152,15 @@ class MockAuth {
       this.currentUser = mappedUser;
       this.notify();
       return { user: mappedUser };
+    } catch (error) {
+      console.error('Email Sign In Error:', error);
+      throw error;
     }
-
-    // Mock Login
-    const mockUser: MockUser = {
-      uid: 'mock_user_123',
-      displayName: 'DAE Student',
-      email: email,
-      photoURL: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'
-    };
-    this.currentUser = mockUser;
-    localStorage.setItem(AUTH_KEY, JSON.stringify(mockUser));
-    this.notify();
-    return { user: mockUser };
   }
 
   async signOut() {
-    if (isFirebaseConfigured && firebaseAuth) {
-      await signOut(firebaseAuth);
-    }
+    await signOut(firebaseAuth);
     this.currentUser = null;
-    localStorage.removeItem(AUTH_KEY);
     this.notify();
   }
 
@@ -229,31 +180,18 @@ export const logout = () => auth.signOut();
 
 // Database Operations
 export const getUserProfile = async (uid: string): Promise<UserProfile | null> => {
-  if (isFirebaseConfigured && firestore) {
+  try {
     const userRef = doc(firestore, 'users', uid);
     const userSnap = await getDoc(userRef);
     return userSnap.exists() ? (userSnap.data() as UserProfile) : null;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.GET, `users/${uid}`);
+    return null;
   }
-  
-  // Mock
-  const saved = localStorage.getItem(AUTH_KEY);
-  if (saved) {
-    const user = JSON.parse(saved);
-    if (user.uid === uid) {
-      return {
-        ...user,
-        createdAt: new Date(),
-        enrolledCourses: user.enrolledCourses || [],
-        completedLessons: user.completedLessons || [],
-        skills: user.skills || []
-      } as UserProfile;
-    }
-  }
-  return null;
 };
 
 export const saveRoadmap = async (userId: string, roadmap: CvRoadmap) => {
-  if (isFirebaseConfigured && firestore) {
+  try {
     const roadmapRef = collection(firestore, 'roadmaps');
     const docRef = await addDoc(roadmapRef, {
       ...roadmap,
@@ -261,29 +199,14 @@ export const saveRoadmap = async (userId: string, roadmap: CvRoadmap) => {
       createdAt: Timestamp.now()
     });
     return { ...roadmap, id: docRef.id };
+  } catch (error) {
+    handleFirestoreError(error, OperationType.CREATE, 'roadmaps');
+    return null;
   }
-
-  // Mock
-  const existing = localStorage.getItem(ROADMAPS_KEY);
-  const roadmaps = existing ? JSON.parse(existing) : [];
-  
-  const newEntry = {
-    ...roadmap,
-    id: 'rm_' + Date.now(),
-    userId,
-    createdAt: { 
-      toDate: () => new Date(),
-      toLocaleDateString: () => new Date().toLocaleDateString()
-    }
-  };
-  
-  roadmaps.push(newEntry);
-  localStorage.setItem(ROADMAPS_KEY, JSON.stringify(roadmaps));
-  return newEntry;
 };
 
 export const getUserRoadmaps = async (userId: string) => {
-  if (isFirebaseConfigured && firestore) {
+  try {
     const q = query(collection(firestore, 'roadmaps'), where('userId', '==', userId));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ 
@@ -294,53 +217,28 @@ export const getUserRoadmaps = async (userId: string) => {
         toLocaleDateString: () => (doc.data().createdAt as Timestamp).toDate().toLocaleDateString()
       }
     } as any));
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, 'roadmaps');
+    return [];
   }
-
-  // Mock
-  const existing = localStorage.getItem(ROADMAPS_KEY);
-  if (!existing) return [];
-  const roadmaps = JSON.parse(existing);
-  return roadmaps
-    .filter((rm: any) => rm.userId === userId)
-    .map((rm: any) => ({
-      ...rm,
-      createdAt: {
-        toDate: () => new Date(rm.createdAt || Date.now()),
-        toLocaleDateString: () => new Date(rm.createdAt || Date.now()).toLocaleDateString()
-      }
-    }))
-    .sort((a: any, b: any) => b.id.localeCompare(a.id));
 };
 
 export const updateRoadmap = async (id: string, data: any) => {
-  if (isFirebaseConfigured && firestore) {
+  try {
     const roadmapRef = doc(firestore, 'roadmaps', id);
     await updateDoc(roadmapRef, data);
-    return;
-  }
-
-  const existing = localStorage.getItem(ROADMAPS_KEY);
-  if (!existing) return;
-  const roadmaps = JSON.parse(existing);
-  const index = roadmaps.findIndex((rm: any) => rm.id === id);
-  if (index !== -1) {
-    roadmaps[index] = { ...roadmaps[index], ...data };
-    localStorage.setItem(ROADMAPS_KEY, JSON.stringify(roadmaps));
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, `roadmaps/${id}`);
   }
 };
 
 export const deleteRoadmap = async (id: string) => {
-  if (isFirebaseConfigured && firestore) {
+  try {
     const roadmapRef = doc(firestore, 'roadmaps', id);
     await deleteDoc(roadmapRef);
-    return;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `roadmaps/${id}`);
   }
-
-  const existing = localStorage.getItem(ROADMAPS_KEY);
-  if (!existing) return;
-  const roadmaps = JSON.parse(existing);
-  const filtered = roadmaps.filter((rm: any) => rm.id !== id);
-  localStorage.setItem(ROADMAPS_KEY, JSON.stringify(filtered));
 };
 
 import { Course, Lesson } from "../types";
@@ -399,68 +297,46 @@ const MOCK_COURSES: Course[] = [
 ];
 
 export const getCourses = async (): Promise<Course[]> => {
-  if (isFirebaseConfigured && firestore) {
+  try {
     const querySnapshot = await getDocs(collection(firestore, 'courses'));
     if (!querySnapshot.empty) {
       return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Course));
     }
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, 'courses');
   }
   return MOCK_COURSES;
 };
 
 export const getCourseById = async (id: string): Promise<Course | null> => {
-  if (isFirebaseConfigured && firestore) {
+  try {
     const docRef = doc(firestore, 'courses', id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) return { id: docSnap.id, ...docSnap.data() } as Course;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.GET, `courses/${id}`);
   }
   return MOCK_COURSES.find(c => c.id === id) || null;
 };
 
 export const enrollInCourse = async (userId: string, courseId: string) => {
-  if (isFirebaseConfigured && firestore) {
+  try {
     const userRef = doc(firestore, 'users', userId);
     await updateDoc(userRef, {
       enrolledCourses: arrayUnion(courseId)
     });
-    return;
-  }
-
-  // Mock
-  const saved = localStorage.getItem(AUTH_KEY);
-  if (saved) {
-    const user = JSON.parse(saved);
-    if (user.uid === userId) {
-      const enrolled = user.enrolledCourses || [];
-      if (!enrolled.includes(courseId)) {
-        enrolled.push(courseId);
-        user.enrolledCourses = enrolled;
-        localStorage.setItem(AUTH_KEY, JSON.stringify(user));
-      }
-    }
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, `users/${userId}`);
   }
 };
 
 export const completeLesson = async (userId: string, lessonId: string) => {
-  if (isFirebaseConfigured && firestore) {
+  try {
     const userRef = doc(firestore, 'users', userId);
     await updateDoc(userRef, {
       completedLessons: arrayUnion(lessonId)
     });
-    return;
-  }
-
-  // Mock
-  const saved = localStorage.getItem(AUTH_KEY);
-  if (saved) {
-    const user = JSON.parse(saved);
-    if (user.uid === userId) {
-      const completed = user.completedLessons || [];
-      if (!completed.includes(lessonId)) {
-        completed.push(lessonId);
-        user.completedLessons = completed;
-        localStorage.setItem(AUTH_KEY, JSON.stringify(user));
-      }
-    }
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, `users/${userId}`);
   }
 };
