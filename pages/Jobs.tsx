@@ -1,16 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
-import PostCard from '../components/PostCard';
-import { MOCK_POSTS } from '../constants';
-import { Search, Bot, Activity, RefreshCw, AlertCircle, Sparkles, Send, Loader2, ExternalLink } from 'lucide-react';
+import { Search, Bot, Activity, RefreshCw, AlertCircle, Sparkles, Send, Loader2, ExternalLink, MapPin, Clock } from 'lucide-react';
 import { fetchLiveJobsFromBot } from '../services/jobService';
 import { searchJobsInPakistan, MentorResponse } from '../services/geminiService';
-import { BlogPost } from '../types';
+import { getJobs } from '../services/firebaseService';
+import { JobListing } from '../types';
+import { Link } from 'react-router-dom';
 import Markdown from 'react-markdown';
 
 const Jobs: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [liveJobs, setLiveJobs] = useState<BlogPost[]>([]);
+  const [liveJobs, setLiveJobs] = useState<JobListing[]>([]);
+  const [dbJobs, setDbJobs] = useState<JobListing[]>([]);
   const [isBotLoading, setIsBotLoading] = useState(false);
   const [botStatus, setBotStatus] = useState<'online' | 'offline' | 'searching'>('searching');
   
@@ -21,14 +22,28 @@ const Jobs: React.FC = () => {
 
   useEffect(() => {
     loadBotJobs();
+    loadDbJobs();
   }, []);
+
+  const loadDbJobs = async () => {
+    const jobs = await getJobs();
+    setDbJobs(jobs);
+  };
 
   const loadBotJobs = async () => {
     setIsBotLoading(true);
     setBotStatus('searching');
     const jobs = await fetchLiveJobsFromBot();
     if (jobs.length > 0) {
-      setLiveJobs(jobs);
+      setLiveJobs(jobs.map(j => ({
+        id: j.id,
+        title: j.title,
+        company: 'Scraped Source',
+        location: 'Pakistan',
+        description: j.excerpt,
+        postedDate: j.date,
+        type: 'Full-time'
+      } as JobListing)));
       setBotStatus('online');
     } else {
       setBotStatus('offline');
@@ -52,12 +67,13 @@ const Jobs: React.FC = () => {
     }
   };
 
-  const allJobs = [...liveJobs, ...MOCK_POSTS];
+  const allJobs = [...liveJobs, ...dbJobs];
 
-  const filteredPosts = allJobs.filter(post => 
-    (post.category === 'Jobs' || post.category === 'Internship' || post.category === 'Apprenticeship') &&
-    (post.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-     post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())))
+  const filteredJobs = allJobs.filter(job => 
+    job.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (job.tags && job.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())))
   );
 
   return (
@@ -181,16 +197,53 @@ const Jobs: React.FC = () => {
         )}
 
         {/* Results */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPosts.length > 0 ? (
-                filteredPosts.map(post => (
-                  <div key={post.id} className="relative group">
-                    {post.id.startsWith('bot') && (
+        <div className="grid grid-cols-1 gap-6">
+            {filteredJobs.length > 0 ? (
+                filteredJobs.map(job => (
+                  <div key={job.id} className="relative group bg-white rounded-3xl p-6 md:p-8 border border-slate-200 hover:border-blue-200 hover:shadow-xl transition-all">
+                    {job.id.startsWith('bot') && (
                       <div className="absolute -top-3 -right-3 z-10 bg-emerald-600 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-lg flex items-center gap-1">
                         <Activity className="w-3 h-3" /> LIVE BOT
                       </div>
                     )}
-                    <PostCard post={post} />
+                    <div className="flex flex-col md:flex-row gap-6 md:items-center">
+                      <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
+                        <img src={job.logo || 'https://images.unsplash.com/photo-1590674116497-606233ca0f9b?auto=format&fit=crop&q=80&w=200'} alt={job.company} className="w-full h-full object-cover" />
+                      </div>
+                      
+                      <div className="flex-grow">
+                        <div className="flex flex-wrap items-center gap-3 mb-2">
+                          <h3 className="text-xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">{job.title}</h3>
+                          <span className="bg-slate-100 text-slate-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
+                            {job.type}
+                          </span>
+                        </div>
+                        
+                        <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-slate-500 text-sm font-medium">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-700">{job.company}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-slate-400" />
+                            {job.location}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-slate-400" />
+                            {job.postedDate}
+                          </div>
+                        </div>
+                        
+                        <p className="mt-4 text-slate-500 leading-relaxed max-w-3xl line-clamp-2">
+                          {job.description}
+                        </p>
+                      </div>
+                      
+                      <div className="flex-shrink-0 mt-4 md:mt-0">
+                        <Link to={`/jobs/${job.id}`} className="w-full md:w-auto bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-colors shadow-lg">
+                          View Details
+                        </Link>
+                      </div>
+                    </div>
                   </div>
                 ))
             ) : (

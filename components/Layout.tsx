@@ -8,6 +8,7 @@ import {
   Home as HomeIcon, Briefcase, Terminal, Settings2, ChevronRight, ChevronDown
 } from 'lucide-react';
 import AuthStatus from './AuthStatus';
+import Newsletter from './Newsletter';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -181,7 +182,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* --- FOOTER --- */}
       <footer className="bg-slate-950 text-slate-300 relative mt-auto border-t border-white/5">
-        <div className="container mx-auto px-4 pt-20 pb-10 max-w-6xl">
+        <div className="container mx-auto px-4 pt-10 max-w-6xl">
+          <div className="mb-16">
+            <Newsletter />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 text-center md:text-left">
             <div className="space-y-6 flex flex-col items-center md:items-start">
               <div className="flex items-center gap-2">

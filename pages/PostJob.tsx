@@ -1,16 +1,22 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Briefcase, Building2, FileText, Tag, Image as ImageIcon, Send, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
+import { Briefcase, Building2, FileText, Tag, Image as ImageIcon, Send, ArrowLeft, CheckCircle, Loader2, MapPin, DollarSign, Clock } from 'lucide-react';
+import { createJob } from '../services/firebaseService';
+import { useAuth } from '../components/FirebaseProvider';
 
 const PostJob: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     company: '',
+    location: '',
     description: '',
+    type: 'Full-time' as const,
+    salary: '',
     category: 'Jobs',
     tags: '',
     image: ''
@@ -18,19 +24,30 @@ const PostJob: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      alert('You must be signed in to post a job.');
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/jobs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          tags: formData.tags.split(',').map(t => t.trim()).filter(t => t !== '')
-        })
-      });
+      const jobData = {
+        title: formData.title,
+        company: formData.company,
+        location: formData.location,
+        description: formData.description,
+        type: formData.type,
+        salary: formData.salary,
+        category: formData.category,
+        tags: formData.tags.split(',').map(t => t.trim()).filter(t => t !== ''),
+        logo: formData.image,
+        authorUid: user.uid
+      };
 
-      if (response.ok) {
+      const result = await createJob(jobData);
+
+      if (result) {
         setIsSuccess(true);
         setTimeout(() => navigate('/jobs/pakistan'), 2000);
       } else {
@@ -126,29 +143,76 @@ const PostJob: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                  <Tag className="w-3 h-3" /> Tags (comma separated)
+                  <MapPin className="w-3 h-3" /> Location
                 </label>
                 <input 
+                  required
                   type="text" 
-                  placeholder="e.g. Electrical, Maintenance, Karachi"
+                  placeholder="e.g. Karachi, Pakistan"
                   className="w-full p-4 rounded-2xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-bold"
-                  value={formData.tags}
-                  onChange={(e) => setFormData({...formData, tags: e.target.value})}
+                  value={formData.location}
+                  onChange={(e) => setFormData({...formData, location: e.target.value})}
                 />
               </div>
 
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                  <ImageIcon className="w-3 h-3" /> Header Image URL (Optional)
+                  <Clock className="w-3 h-3" /> Job Type
+                </label>
+                <select 
+                  className="w-full p-4 rounded-2xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-bold"
+                  value={formData.type}
+                  onChange={(e) => setFormData({...formData, type: e.target.value as any})}
+                >
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Internship">Internship</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                  <DollarSign className="w-3 h-3" /> Salary (Optional)
                 </label>
                 <input 
-                  type="url" 
-                  placeholder="https://images.unsplash.com/..."
+                  type="text" 
+                  placeholder="e.g. PKR 70,000 - 90,000"
                   className="w-full p-4 rounded-2xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-bold"
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
+                  value={formData.salary}
+                  onChange={(e) => setFormData({...formData, salary: e.target.value})}
                 />
               </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                  <Tag className="w-3 h-3" /> Category
+                </label>
+                <select 
+                  className="w-full p-4 rounded-2xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-bold"
+                  value={formData.category}
+                  onChange={(e) => setFormData({...formData, category: e.target.value})}
+                >
+                  <option value="Jobs">General Jobs</option>
+                  <option value="Internship">Internship</option>
+                  <option value="Apprenticeship">Apprenticeship</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <Tag className="w-3 h-3" /> Skills Tags (comma separated)
+              </label>
+              <input 
+                type="text" 
+                placeholder="e.g. Electrical, Maintenance, Karachi"
+                className="w-full p-4 rounded-2xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-bold"
+                value={formData.tags}
+                onChange={(e) => setFormData({...formData, tags: e.target.value})}
+              />
             </div>
 
             <button 

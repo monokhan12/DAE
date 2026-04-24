@@ -1,16 +1,33 @@
 import React, { useState } from 'react';
-import { Mail } from 'lucide-react';
+import { Mail, Loader2, CheckCircle } from 'lucide-react';
+import { subscribeToNewsletter } from '../services/firebaseService';
 
 const Newsletter: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(email) {
+    if (!email) return;
+
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const success = await subscribeToNewsletter(email);
+      if (success) {
         setSubscribed(true);
-        setTimeout(() => setSubscribed(false), 3000);
         setEmail('');
+        setTimeout(() => setSubscribed(false), 5000);
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      setError('Subscription failed. Please check your connection.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -28,23 +45,40 @@ const Newsletter: React.FC = () => {
             
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
                 <div className="relative flex-grow">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                     <input 
                         type="email" 
                         placeholder="Your Email Address"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        disabled={loading || subscribed}
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-bold placeholder:text-slate-400 disabled:opacity-50"
                         required
                     />
                 </div>
                 <button 
                     type="submit" 
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-lg shadow-blue-200"
+                    disabled={loading || subscribed}
+                    className={`flex items-center justify-center gap-2 font-black py-4 px-8 rounded-2xl transition-all shadow-xl uppercase text-[10px] tracking-widest ${
+                      subscribed 
+                        ? 'bg-emerald-500 text-white shadow-emerald-200' 
+                        : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-200'
+                    } disabled:opacity-75`}
                 >
-                    {subscribed ? 'Subscribed!' : 'Subscribe Now'}
+                    {loading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : subscribed ? (
+                      <><CheckCircle className="w-5 h-5" /> Subscribed!</>
+                    ) : (
+                      'Subscribe Now'
+                    )}
                 </button>
             </form>
+            {error && (
+              <p className="mt-4 text-rose-500 text-sm font-bold animate-in fade-in slide-in-from-top-2">
+                {error}
+              </p>
+            )}
         </div>
     </div>
   );

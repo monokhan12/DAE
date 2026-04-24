@@ -26,6 +26,8 @@
         "description": { "type": "string" },
         "postedDate": { "type": "string" },
         "type": { "type": "string", "enum": ["Full-time", "Part-time", "Contract", "Internship"] },
+        "category": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
         "salary": { "type": "string" },
         "link": { "type": "string", "format": "uri" },
         "logo": { "type": "string", "format": "uri" },
@@ -48,6 +50,16 @@
         "authorUid": { "type": "string" }
       },
       "required": ["title", "excerpt", "category", "authorUid"]
+    },
+    "NewsletterSubscription": {
+      "title": "Newsletter Subscription",
+      "description": "User email for newsletter subscription",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "createdAt"]
     }
   },
   "firestore": {
@@ -62,6 +74,10 @@
     "/posts/{postId}": {
       "schema": "BlogPost",
       "description": "Blog posts collection"
+    },
+    "/subscriptions/{email}": {
+      "schema": "NewsletterSubscription",
+      "description": "Newsletter subscriptions collection"
     }
   }
 }

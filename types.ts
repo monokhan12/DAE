@@ -107,6 +107,8 @@ export interface JobListing {
   description: string;
   postedDate: string;
   type: 'Full-time' | 'Part-time' | 'Contract' | 'Internship';
+  category?: string;
+  tags?: string[];
   salary?: string;
   link?: string;
   logo?: string;

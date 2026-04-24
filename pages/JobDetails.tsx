@@ -1,17 +1,38 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { MOCK_JOBS } from '../constants';
+import { getJobById } from '../services/firebaseService';
+import { JobListing } from '../types';
 import { 
   MapPin, Building2, Clock, Zap, DollarSign, ArrowLeft, ArrowRight,
   Share2, Bookmark, ShieldCheck, Briefcase, Globe, 
-  CheckCircle2, Info
+  CheckCircle2, Info, Loader2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const JobDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const job = MOCK_JOBS.find(j => j.id === id);
+  const [job, setJob] = useState<JobListing | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJob = async () => {
+      if (id) {
+        const data = await getJobById(id);
+        setJob(data);
+      }
+      setLoading(false);
+    };
+    fetchJob();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+      </div>
+    );
+  }
 
   if (!job) {
     return (

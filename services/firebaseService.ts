@@ -22,6 +22,7 @@ import {
   Timestamp,
   addDoc,
   deleteDoc,
+  orderBy,
   handleFirestoreError,
   OperationType
 } from "../firebase";
@@ -241,9 +242,92 @@ export const deleteRoadmap = async (id: string) => {
   }
 };
 
-import { Course, Lesson } from "../types";
+import { Course, Lesson, JobListing } from "../types";
 
 // ... existing code ...
+
+const MOCK_JOBS: JobListing[] = [
+  {
+    id: 'j1',
+    title: 'Junior Electrical Technician',
+    company: 'Lucky Cement Limited',
+    location: 'Pezu, Khyber Pakhtunkhwa',
+    type: 'Full-time',
+    postedDate: '2 days ago',
+    description: 'Maintenance of industrial electrical systems, troubleshooting of PLC panels and motors.',
+    salary: 'PKR 45,000 - 55,000',
+    logo: 'https://images.unsplash.com/photo-1590674116497-606233ca0f9b?auto=format&fit=crop&q=80&w=200'
+  },
+  {
+    id: 'j2',
+    title: 'Mechanical Supervisor (DAE)',
+    company: 'Engro Fertilizers',
+    location: 'Daharki, Sindh',
+    type: 'Full-time',
+    postedDate: '3 days ago',
+    description: 'Leading a team of mechanics for turbine and compressor overhauling and routine maintenance.',
+    salary: 'PKR 60,000 - 75,000',
+    logo: 'https://images.unsplash.com/photo-1581093191175-e062b09d3e75?auto=format&fit=crop&q=80&w=200'
+  },
+  {
+    id: 'j3',
+    title: 'Civil Surveyor',
+    company: 'NESPAK',
+    location: 'Lahore, Punjab',
+    type: 'Contract',
+    postedDate: '1 week ago',
+    description: 'Topographic surveys, leveling, and site layout using Total Station and GPS.',
+    salary: 'PKR 50,000 - 65,000',
+    logo: 'https://images.unsplash.com/photo-1541976590-713941682d1c?auto=format&fit=crop&q=80&w=200'
+  }
+];
+
+// Jobs Data & Operations
+export const getJobs = async (filter?: string): Promise<JobListing[]> => {
+  try {
+    const jobsRef = collection(firestore, 'jobs');
+    let q = query(jobsRef, orderBy('createdAt', 'desc'));
+    
+    if (filter) {
+      // Basic filtering for demo/prototype
+      q = query(jobsRef, where('category', '==', filter), orderBy('createdAt', 'desc'));
+    }
+    
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as JobListing));
+    }
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, 'jobs');
+  }
+  return MOCK_JOBS;
+};
+
+export const getJobById = async (id: string): Promise<JobListing | null> => {
+  try {
+    const docRef = doc(firestore, 'jobs', id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) return { id: docSnap.id, ...docSnap.data() } as JobListing;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.GET, `jobs/${id}`);
+  }
+  return MOCK_JOBS.find(j => j.id === id) || null;
+};
+
+export const createJob = async (job: Omit<JobListing, 'id' | 'postedDate'>) => {
+  try {
+    const jobsRef = collection(firestore, 'jobs');
+    const docRef = await addDoc(jobsRef, {
+      ...job,
+      createdAt: Timestamp.now(),
+      postedDate: 'Just now'
+    });
+    return { ...job, id: docRef.id, postedDate: 'Just now' };
+  } catch (error) {
+    handleFirestoreError(error, OperationType.CREATE, 'jobs');
+    return null;
+  }
+};
 
 // Course Data & Operations
 const COURSES_KEY = 'j4d_courses';
@@ -338,5 +422,20 @@ export const completeLesson = async (userId: string, lessonId: string) => {
     });
   } catch (error) {
     handleFirestoreError(error, OperationType.UPDATE, `users/${userId}`);
+  }
+};
+
+// Newsletter Operations
+export const subscribeToNewsletter = async (email: string) => {
+  try {
+    const subRef = doc(firestore, 'subscriptions', email.toLowerCase());
+    await setDoc(subRef, {
+      email: email.toLowerCase(),
+      createdAt: Timestamp.now()
+    });
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.CREATE, `subscriptions/${email}`);
+    return false;
   }
 };

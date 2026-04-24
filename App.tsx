@@ -21,6 +21,7 @@ import AiTools from './pages/AiTools';
 import CvAnalyzer from './pages/CvAnalyzer';
 import VisionBoard from './pages/VisionBoard';
 import GenAiAcademy from './pages/GenAiAcademy';
+import AuthLanding from './pages/AuthLanding';
 
 import { FirebaseProvider } from './components/FirebaseProvider';
 
@@ -50,6 +51,9 @@ const App: React.FC = () => {
             <Route path="/mentor" element={<AiMentor />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/about" element={<About />} />
+            <Route path="/auth" element={<AuthLanding />} />
+            <Route path="/signup" element={<AuthLanding initialMode="signup" />} />
+            <Route path="/login" element={<AuthLanding initialMode="login" />} />
           </Routes>
         </Layout>
       </Router>

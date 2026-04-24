@@ -1,11 +1,23 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Globe, ArrowRight, Briefcase, Sparkles, Bot, ShieldCheck, Zap, Clock, Building2, DollarSign } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { MOCK_JOBS } from '../constants';
+import { getJobs } from '../services/firebaseService';
+import { JobListing } from '../types';
 
 const JobsLanding: React.FC = () => {
+  const [featuredJobs, setFeaturedJobs] = useState<JobListing[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      const jobs = await getJobs();
+      setFeaturedJobs(jobs.slice(0, 5));
+      setLoading(false);
+    };
+    fetchJobs();
+  }, []);
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -209,59 +221,67 @@ const JobsLanding: React.FC = () => {
           viewport={{ once: true }}
           className="grid grid-cols-1 gap-6"
         >
-          {MOCK_JOBS.map((job) => (
-            <motion.div 
-              key={job.id}
-              variants={itemVariants}
-              className="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/5 transition-all group"
-            >
-              <div className="flex flex-col md:flex-row gap-6 md:items-center">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200 group-hover:scale-105 transition-transform">
-                  <img src={job.logo} alt={job.company} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                </div>
-                
-                <div className="flex-grow">
-                  <div className="flex flex-wrap items-center gap-3 mb-2">
-                    <h3 className="text-xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">{job.title}</h3>
-                    <span className="bg-slate-100 text-slate-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
-                      {job.type}
-                    </span>
+          {loading ? (
+            <div className="flex flex-col gap-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="h-32 bg-slate-200 animate-pulse rounded-3xl"></div>
+              ))}
+            </div>
+          ) : (
+            featuredJobs.map((job) => (
+              <motion.div 
+                key={job.id}
+                variants={itemVariants}
+                className="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/5 transition-all group"
+              >
+                <div className="flex flex-col md:flex-row gap-6 md:items-center">
+                  <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200 group-hover:scale-105 transition-transform">
+                    <img src={job.logo || 'https://images.unsplash.com/photo-1590674116497-606233ca0f9b?auto=format&fit=crop&q=80&w=200'} alt={job.company} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   </div>
                   
-                  <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-slate-500 text-sm font-medium">
-                    <div className="flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-slate-400" />
-                      {job.company}
+                  <div className="flex-grow">
+                    <div className="flex flex-wrap items-center gap-3 mb-2">
+                      <h3 className="text-xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">{job.title}</h3>
+                      <span className="bg-slate-100 text-slate-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
+                        {job.type}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-slate-400" />
-                      {job.location}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-slate-400" />
-                      {job.postedDate}
-                    </div>
-                    {job.salary && (
-                      <div className="flex items-center gap-2 text-emerald-600 font-bold">
-                        <DollarSign className="w-4 h-4" />
-                        {job.salary}
+                    
+                    <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-slate-500 text-sm font-medium">
+                      <div className="flex items-center gap-2">
+                        <Building2 className="w-4 h-4 text-slate-400" />
+                        {job.company}
                       </div>
-                    )}
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-slate-400" />
+                        {job.location}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-slate-400" />
+                        {job.postedDate}
+                      </div>
+                      {job.salary && (
+                        <div className="flex items-center gap-2 text-emerald-600 font-bold">
+                          <DollarSign className="w-4 h-4" />
+                          {job.salary}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <p className="mt-4 text-slate-500 leading-relaxed max-w-3xl">
+                      {job.description}
+                    </p>
                   </div>
                   
-                  <p className="mt-4 text-slate-500 leading-relaxed max-w-3xl">
-                    {job.description}
-                  </p>
+                  <div className="flex-shrink-0 mt-4 md:mt-0">
+                    <Link to={`/jobs/${job.id}`} className="w-full md:w-auto bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-colors shadow-lg shadow-slate-200 group-hover:shadow-blue-200 inline-block text-center">
+                      View Details
+                    </Link>
+                  </div>
                 </div>
-                
-                <div className="flex-shrink-0 mt-4 md:mt-0">
-                  <Link to={`/jobs/${job.id}`} className="w-full md:w-auto bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-colors shadow-lg shadow-slate-200 group-hover:shadow-blue-200 inline-block text-center">
-                    View Details
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))
+          )}
         </motion.div>
       </section>
 

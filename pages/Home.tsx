@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Newsletter from '../components/Newsletter';
 import PostCard from '../components/PostCard';
 import JobCard from '../components/JobCard';
-import { MOCK_POSTS, DAE_PROGRAMS, TECHNICAL_BOARDS, MOCK_JOBS } from '../constants';
+import { MOCK_POSTS, DAE_PROGRAMS, TECHNICAL_BOARDS } from '../constants';
+import { getJobs } from '../services/firebaseService';
+import { JobListing } from '../types';
 import { 
   ArrowRight, Briefcase, GraduationCap, Bot, Sparkles, Search, 
   Brain, Globe, Zap, ChevronRight, Landmark, ShieldCheck, 
@@ -14,9 +15,17 @@ import {
 import { motion } from 'framer-motion';
 
 const Home: React.FC = () => {
+  const [featuredJobs, setFeaturedJobs] = useState<JobListing[]>([]);
   const recentPosts = [...MOCK_POSTS].sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 3);
-  const featuredJobs = MOCK_JOBS.slice(0, 3);
   const topTechnologies = ["Electrical", "Mechanical", "Civil", "Electronics", "CIT", "Mechatronics"];
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      const jobs = await getJobs();
+      setFeaturedJobs(jobs.slice(0, 3));
+    };
+    fetchJobs();
+  }, []);
 
   return (
     <div className="bg-white">
@@ -222,10 +231,40 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 6. NEWSLETTER CTA */}
-      <section className="py-32 bg-white">
-        <div className="container mx-auto px-4">
-             <Newsletter />
+      {/* 6. FINAL CTA */}
+      <section className="py-32 bg-blue-600 relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-600/20 rounded-full blur-[100px] -ml-32 -mb-32"></div>
+        </div>
+        <div className="container mx-auto px-4 max-w-4xl relative z-10 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-6xl font-black text-white mb-8 tracking-tighter leading-tight">
+              Ready to Build Your <br />
+              <span className="text-blue-200">Technical Legacy?</span>
+            </h2>
+            <p className="text-blue-100 text-lg md:text-xl mb-12 font-medium max-w-2xl mx-auto">
+              Join 50,000+ DAE students and professionals already using our AI-powered ecosystem to accelerate their careers.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-6">
+              <Link 
+                to="/signup" 
+                className="px-12 py-6 bg-white text-blue-600 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-blue-50 transition-all shadow-2xl shadow-blue-900/40"
+              >
+                Create Free Account
+              </Link>
+              <Link 
+                to="/about" 
+                className="px-12 py-6 bg-transparent border-2 border-white/30 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-white/10 transition-all"
+              >
+                Learn More
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>
