@@ -51,6 +51,36 @@
       },
       "required": ["title", "excerpt", "category", "authorUid"]
     },
+    "Course": {
+      "title": "Course",
+      "description": "An educational course",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "instructor": { "type": "string" },
+        "category": { "type": "string" },
+        "thumbnail": { "type": "string", "format": "uri" },
+        "level": { "type": "string", "enum": ["Beginner", "Intermediate", "Advanced"] },
+        "rating": { "type": "number" },
+        "enrolledCount": { "type": "number" },
+        "lessons": { "type": "array", "items": { "$ref": "#/definitions/Lesson" } }
+      },
+      "required": ["title", "description", "instructor", "category"]
+    },
+    "Roadmap": {
+      "title": "Roadmap",
+      "description": "AI generated career roadmap",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "extractedSkills": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "summary", "createdAt"]
+    },
     "NewsletterSubscription": {
       "title": "Newsletter Subscription",
       "description": "User email for newsletter subscription",
@@ -74,6 +104,14 @@
     "/posts/{postId}": {
       "schema": "BlogPost",
       "description": "Blog posts collection"
+    },
+    "/courses/{courseId}": {
+      "schema": "Course",
+      "description": "Educational courses collection"
+    },
+    "/roadmaps/{roadmapId}": {
+      "schema": "Roadmap",
+      "description": "User career roadmaps collection"
     },
     "/subscriptions/{email}": {
       "schema": "NewsletterSubscription",

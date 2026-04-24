@@ -84,7 +84,7 @@ const GenAiAcademy: React.FC = () => {
   return (
     <div className="bg-slate-50 min-h-screen">
       {/* 1. HERO SECTION */}
-      <section className="relative pt-32 pb-24 px-4 bg-slate-950 overflow-hidden">
+      <section className="relative pt-40 pb-24 px-4 bg-slate-950 overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 z-0">
           <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] animate-pulse"></div>

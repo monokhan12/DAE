@@ -145,6 +145,25 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    match /courses/{courseId} {
+      allow read: if true; // Courses are public
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /roadmaps/{roadmapId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && request.resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    match /subscriptions/{email} {
+      allow create: if true; // Newsletter subscription is public
+      allow read, update, delete: if isAdmin();
+    }
+
     // Default deny
     match /{path=**} {
       allow read, write: if false;

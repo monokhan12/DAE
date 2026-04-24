@@ -110,40 +110,52 @@ const Home: React.FC = () => {
                <p className="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto font-medium">The most advanced technical career ecosystem ever built for Pakistani students.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {/* AI Tools Hub */}
-                <div className="group p-12 rounded-[3.5rem] bg-slate-50 border border-slate-100 transition-all hover:shadow-3xl hover:-translate-y-3 flex flex-col">
-                    <div className="w-20 h-20 bg-slate-950 rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform">
-                        <Terminal className="w-10 h-10 text-white" />
+                <div className="group p-10 rounded-[3rem] bg-slate-50 border border-slate-100 transition-all hover:shadow-3xl hover:-translate-y-3 flex flex-col">
+                    <div className="w-16 h-16 bg-slate-950 rounded-2xl flex items-center justify-center mb-8 shadow-xl group-hover:scale-110 transition-transform">
+                        <Terminal className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">AI Utility Hub</h3>
-                    <p className="text-slate-500 mb-10 leading-relaxed font-medium flex-grow">14+ specialized tools for PLC logic, technical translations, exam prep, and professional document drafting.</p>
-                    <Link to="/ai-tools" className="w-full py-5 bg-white border border-slate-200 rounded-2xl font-black text-[10px] uppercase tracking-widest text-slate-900 flex items-center justify-center gap-3 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all shadow-sm">
-                        Launch Workspace <ArrowRight className="w-4 h-4" />
+                    <h3 className="text-xl font-black text-slate-900 mb-4 tracking-tight">AI Utility Hub</h3>
+                    <p className="text-slate-500 mb-8 text-sm leading-relaxed font-medium flex-grow">14+ specialized tools for PLC logic, technical translations, and professional document drafting.</p>
+                    <Link to="/ai-tools" className="w-full py-4 bg-white border border-slate-200 rounded-2xl font-black text-[10px] uppercase tracking-widest text-slate-900 flex items-center justify-center gap-3 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all">
+                        Launch Hub <ArrowRight className="w-4 h-4" />
+                    </Link>
+                </div>
+
+                {/* AI Academy */}
+                <div className="group p-10 rounded-[3rem] bg-indigo-50 border border-indigo-100 transition-all hover:shadow-3xl hover:-translate-y-3 flex flex-col">
+                    <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mb-8 shadow-xl group-hover:scale-110 transition-transform">
+                        <GraduationCap className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-black text-slate-900 mb-4 tracking-tight">GenAI Academy</h3>
+                    <p className="text-slate-500 mb-8 text-sm leading-relaxed font-medium flex-grow">Master Prompt Engineering & AI Automation with industrial case studies and certification.</p>
+                    <Link to="/academy" className="w-full py-4 bg-white border border-indigo-100 rounded-2xl font-black text-[10px] uppercase tracking-widest text-indigo-600 flex items-center justify-center gap-3 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all">
+                        Go to Academy <ArrowRight className="w-4 h-4" />
                     </Link>
                 </div>
 
                 {/* Jobs Portal */}
-                <div className="group p-12 rounded-[3.5rem] bg-blue-50 border border-blue-100 transition-all hover:shadow-3xl hover:-translate-y-3 flex flex-col">
-                    <div className="w-20 h-20 bg-blue-600 rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform">
-                        <Briefcase className="w-10 h-10 text-white" />
+                <div className="group p-10 rounded-[3rem] bg-blue-50 border border-blue-100 transition-all hover:shadow-3xl hover:-translate-y-3 flex flex-col">
+                    <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-8 shadow-xl group-hover:scale-110 transition-transform">
+                        <Briefcase className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">Smart Jobs Portal</h3>
-                    <p className="text-slate-500 mb-10 leading-relaxed font-medium flex-grow">Our AI bots scan WAPDA, AEC, and major private industrial firms to find the best technical opportunities for you.</p>
-                    <Link to="/jobs" className="w-full py-5 bg-white border border-blue-100 rounded-2xl font-black text-[10px] uppercase tracking-widest text-blue-600 flex items-center justify-center gap-3 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all shadow-sm">
-                        Find Opportunities <ArrowRight className="w-4 h-4" />
+                    <h3 className="text-xl font-black text-slate-900 mb-4 tracking-tight">Smart Jobs</h3>
+                    <p className="text-slate-500 mb-8 text-sm leading-relaxed font-medium flex-grow">AI bots scanning industrial firms to find the best technical opportunities for DAE students.</p>
+                    <Link to="/jobs" className="w-full py-4 bg-white border border-blue-100 rounded-2xl font-black text-[10px] uppercase tracking-widest text-blue-600 flex items-center justify-center gap-3 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all">
+                        Find Jobs <ArrowRight className="w-4 h-4" />
                     </Link>
                 </div>
 
                 {/* AI Career Mentor */}
-                <div className="group p-12 rounded-[3.5rem] bg-indigo-50 border border-indigo-100 transition-all hover:shadow-3xl hover:-translate-y-3 flex flex-col">
-                    <div className="w-20 h-20 bg-indigo-600 rounded-3xl flex items-center justify-center mb-10 shadow-xl group-hover:scale-110 transition-transform">
-                        <Bot className="w-10 h-10 text-white" />
+                <div className="group p-10 rounded-[3rem] bg-emerald-50 border border-emerald-100 transition-all hover:shadow-3xl hover:-translate-y-3 flex flex-col">
+                    <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center mb-8 shadow-xl group-hover:scale-110 transition-transform">
+                        <Bot className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">Expert AI Mentor</h3>
-                    <p className="text-slate-500 mb-10 leading-relaxed font-medium flex-grow">24/7 career counseling. Ask about university admissions (BS/B.Tech), foreign scholarships, or career paths.</p>
-                    <Link to="/mentor" className="w-full py-5 bg-white border border-indigo-100 rounded-2xl font-black text-[10px] uppercase tracking-widest text-indigo-600 flex items-center justify-center gap-3 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all shadow-sm">
-                        Start Counseling <ArrowRight className="w-4 h-4" />
+                    <h3 className="text-xl font-black text-slate-900 mb-4 tracking-tight">AI Mentor</h3>
+                    <p className="text-slate-500 mb-8 text-sm leading-relaxed font-medium flex-grow">24/7 counseling for BS admissions, scholarships, and technical career paths.</p>
+                    <Link to="/mentor" className="w-full py-4 bg-white border border-emerald-100 rounded-2xl font-black text-[10px] uppercase tracking-widest text-emerald-600 flex items-center justify-center gap-3 group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600 transition-all">
+                        Talk to AI <ArrowRight className="w-4 h-4" />
                     </Link>
                 </div>
             </div>

@@ -13,6 +13,7 @@ import AiMentor from './pages/AiMentor';
 import AiDreamer from './pages/AiDreamer';
 import AbroadPath from './pages/AbroadPath';
 import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 import About from './pages/About';
 import MyRoadmaps from './pages/MyRoadmaps';
 import Dashboard from './pages/Dashboard';
@@ -50,6 +51,7 @@ const App: React.FC = () => {
             <Route path="/course/:courseId" element={<CoursePlayer />} />
             <Route path="/mentor" element={<AiMentor />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogPost />} />
             <Route path="/about" element={<About />} />
             <Route path="/auth" element={<AuthLanding />} />
             <Route path="/signup" element={<AuthLanding initialMode="signup" />} />

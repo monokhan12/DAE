@@ -3,8 +3,10 @@ export interface BlogPost {
   id: string;
   title: string;
   excerpt: string;
+  content?: string;
+  author?: string;
   date: string;
-  category: 'Jobs' | 'Admissions' | 'Guide' | 'Entrepreneurship' | 'Internship' | 'Apprenticeship' | 'Past Papers' | 'Education' | 'Updates' | 'Trends';
+  category: 'Jobs' | 'Admissions' | 'Guide' | 'Entrepreneurship' | 'Internship' | 'Apprenticeship' | 'Past Papers' | 'Education' | 'Updates' | 'Trends' | 'Abroad' | 'Freelancing';
   tags: string[];
   image: string;
 }

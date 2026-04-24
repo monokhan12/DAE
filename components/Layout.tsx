@@ -32,8 +32,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <header className={`bg-white border-b border-slate-100 sticky top-0 z-[60] transition-all duration-300 ${scrolled ? 'py-2 shadow-sm' : 'py-4'}`}>
         <div className="container mx-auto px-4 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200 group-hover:rotate-6 transition-transform">
-              <Cpu className="w-5 h-5" />
+            <div className="w-10 h-10 overflow-hidden rounded-xl shadow-lg shadow-blue-200 group-hover:rotate-6 transition-transform">
+              <img src="/logo.svg" alt="Jobs 4 DAE Logo" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
             <span className="text-xl md:text-2xl font-black text-slate-900 tracking-tighter">
               Jobs 4 <span className="text-blue-600">DAE</span>
@@ -189,8 +189,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 text-center md:text-left">
             <div className="space-y-6 flex flex-col items-center md:items-start">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-                  <Cpu className="w-5 h-5" />
+                <div className="w-8 h-8 overflow-hidden rounded-lg">
+                  <img src="/logo.svg" alt="Jobs 4 DAE Logo" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </div>
                 <span className="text-xl font-bold text-white tracking-tight">Jobs 4 DAE</span>
               </div>
@@ -211,6 +211,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex flex-col items-center md:items-start">
               <h3 className="text-white font-bold mb-6 uppercase text-[10px] tracking-[0.2em] text-blue-400">Navigation</h3>
               <ul className="space-y-4 text-sm font-medium">
+                <li><Link to="/academy" className="hover:text-white transition-colors">AI Academy</Link></li>
                 <li><Link to="/dae-pakistan" className="hover:text-white transition-colors">DAE Guide</Link></li>
                 <li><Link to="/jobs/pakistan" className="hover:text-white transition-colors">Jobs in Pakistan</Link></li>
                 <li><Link to="/jobs/abroad" className="hover:text-white transition-colors">Jobs Abroad</Link></li>

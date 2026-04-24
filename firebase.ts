@@ -60,7 +60,7 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
     path
   }
   console.error('Firestore Error: ', JSON.stringify(errInfo));
-  throw new Error(JSON.stringify(errInfo));
+  // Not throwing here to allow the application to fall back to mock data gracefully
 }
 
 // Validate Connection to Firestore

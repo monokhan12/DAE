@@ -35,6 +35,15 @@ const CoursePlayer: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
+    const fetchCourseOnly = async () => {
+      const courseData = await getCourseById(courseId || '');
+      setCourse(courseData);
+      if (courseData && courseData.lessons.length > 0) {
+        setActiveLesson(courseData.lessons[0]);
+      }
+      setLoading(false);
+    };
+
     return auth.onAuthStateChanged(async (u) => {
       setUser(u);
       if (u) {
@@ -47,8 +56,10 @@ const CoursePlayer: React.FC = () => {
         if (courseData && courseData.lessons.length > 0) {
           setActiveLesson(courseData.lessons[0]);
         }
+        setLoading(false);
+      } else {
+        fetchCourseOnly();
       }
-      setLoading(false);
     });
   }, [courseId]);
 
