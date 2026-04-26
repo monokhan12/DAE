@@ -117,7 +117,7 @@ const Dashboard: React.FC = () => {
                 <p className="text-sm font-black text-slate-900 leading-none">{user.displayName}</p>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">ID: {user.uid.slice(0, 8)}</p>
               </div>
-              <img src={user.photoURL} alt="" className="w-10 h-10 rounded-xl border-2 border-white shadow-sm" />
+              <img src={user.photoURL} alt="" className="w-10 h-10 rounded-xl border-2 border-white shadow-sm" referrerPolicy="no-referrer" />
             </div>
           </div>
         </div>
@@ -252,7 +252,7 @@ const Dashboard: React.FC = () => {
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/20 rounded-full blur-3xl -mr-16 -mt-16"></div>
               <div className="relative z-10">
                 <div className="flex items-center gap-4 mb-6">
-                  <img src={user.photoURL} alt="" className="w-16 h-16 rounded-2xl border-2 border-white/20" />
+                  <img src={user.photoURL} alt="" className="w-16 h-16 rounded-2xl border-2 border-white/20" referrerPolicy="no-referrer" />
                   <div>
                     <h3 className="font-black text-lg leading-none">{user.displayName}</h3>
                     <p className="text-blue-400 text-[10px] font-black uppercase tracking-widest mt-2">Elite Technician</p>

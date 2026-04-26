@@ -249,7 +249,12 @@ const AiDreamer: React.FC = () => {
              </div>
 
              <div className="relative group rounded-[3.5rem] border border-white/10 shadow-3xl overflow-hidden aspect-video bg-slate-900">
-                <img src={result.visionImageUrl} alt="Career Vision" className="w-full h-full object-cover animate-in fade-in duration-1000" />
+                <img 
+                  src={result.visionImageUrl} 
+                  alt="Career Vision" 
+                  className="w-full h-full object-cover animate-in fade-in duration-1000" 
+                  referrerPolicy="no-referrer"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent flex items-end p-12 md:p-16">
                    <div className="max-w-2xl">
                       <p className="text-blue-400 font-black uppercase tracking-widest text-xs mb-4">Manifested Reality Projection</p>

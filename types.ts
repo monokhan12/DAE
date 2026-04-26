@@ -77,6 +77,7 @@ export interface EuroPortalMapping {
   portal: string;
   description: string;
   flag: string;
+  code?: string;
 }
 
 export interface Lesson {

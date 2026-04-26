@@ -35,7 +35,7 @@ const processResponse = (response: any): MentorResponse => {
 // --- SPECIALIZED TECHNICAL TOOLS ---
 
 export const generateTechnicalContent = async (toolType: string, input: string): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   let prompt = "";
 
   switch(toolType) {
@@ -100,7 +100,7 @@ export const generateTechnicalContent = async (toolType: string, input: string):
 };
 
 export const searchTechnicalResources = async (query: string): Promise<MentorResponse> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -130,7 +130,7 @@ export const analyzeCvAndProvideRoadmap = async (
   cvMimeType: string,
   interests: string
 ): Promise<CvRoadmap> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const roadmapPrompt = `Analyze this DAE technician's CV. Extra Interests: ${interests}. 
   Provide a concrete technical roadmap in JSON format focusing on their skills and how they can reach their goals.`;
 
@@ -183,7 +183,7 @@ export const analyzeCvAndProvideRoadmap = async (
 };
 
 export const generateCareerVision = async (field: string, location: string): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const visionPrompt = `A cinematic, hyper-realistic, 8k resolution photo of a successful Pakistani technician working as a ${field} in ${location}. 
   The lighting is professional, inspiring PPE. Focus on technical excellence and the specific environment of ${location}.`;
 
@@ -208,7 +208,7 @@ export const generateUnifiedCareerDream = async (
   cvMimeType: string,
   answers: DreamerAnswers
 ): Promise<UnifiedDreamResult> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   const roadmapPrompt = `Analyze this DAE technician's CV and synthesize it with their future dreams: 
   Target Location: ${answers.dreamLocation}. 
@@ -288,7 +288,7 @@ export const generateUnifiedCareerDream = async (
 };
 
 export const searchJobsInPakistan = async (query: string): Promise<MentorResponse> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -315,7 +315,7 @@ export const searchJobsInPakistan = async (query: string): Promise<MentorRespons
 };
 
 export const getMentorResponse = async (userMessage: string): Promise<MentorResponse> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -332,7 +332,7 @@ export const getMentorResponse = async (userMessage: string): Promise<MentorResp
 };
 
 export const searchGermanAusbildung = async (technology: string): Promise<GermanOpportunity[]> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const prompt = `Find 5 current Ausbildung (vocational training) positions in Germany for ${technology} technology from ausbildung.de. 
   Provide results as a JSON array.`;
 
@@ -374,7 +374,7 @@ export const searchAbroadOpportunities = async (
   languageLevel?: string,
   visaType?: string
 ): Promise<EuroOpportunity[]> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   
   // Refined prompt for speed - less chatty, more directive.
   const prompt = `SEARCH ${portal} FOR ${technology} VOCATIONAL/APPRENTICESHIP/TECHNICAL POSITIONS IN ${country}. 

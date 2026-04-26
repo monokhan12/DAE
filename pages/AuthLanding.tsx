@@ -259,7 +259,7 @@ const AuthLanding: React.FC<AuthLandingProps> = ({ initialMode }) => {
             disabled={loading}
             className="w-full py-4 bg-white border border-slate-200 text-slate-700 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-50 transition-all shadow-sm disabled:opacity-50"
           >
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pjax/google.png" alt="Google" className="w-5 h-5" />
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pjax/google.png" alt="Google" className="w-5 h-5" referrerPolicy="no-referrer" />
             Continue with Google
           </button>
 
@@ -276,8 +276,8 @@ const AuthLanding: React.FC<AuthLandingProps> = ({ initialMode }) => {
           </div>
 
           <div className="mt-20 flex items-center justify-center gap-6 opacity-30 grayscale">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Cloud_Logo.svg" alt="Google Cloud" className="h-4" />
-            <img src="https://firebase.google.com/static/images/brand-guidelines/logo-standard.png" alt="Firebase" className="h-4" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Cloud_Logo.svg" alt="Google Cloud" className="h-4" referrerPolicy="no-referrer" />
+            <img src="https://firebase.google.com/static/images/brand-guidelines/logo-standard.png" alt="Firebase" className="h-4" referrerPolicy="no-referrer" />
           </div>
         </div>
       </div>

@@ -199,22 +199,22 @@ export const TECHNICAL_BOARDS = [
 ];
 
 export const ABROAD_PORTALS: EuroPortalMapping[] = [
-  { country: "Germany", portal: "ausbildung.de", description: "Central German portal for apprenticeships", flag: "🇩🇪" },
-  { country: "Canada", portal: "Job Bank (Apprenticeship)", description: "Official Canadian apprenticeship service", flag: "🇨🇦" },
-  { country: "Belgium", portal: "VDAB / Le Forem", description: "Belgian vocational training portals", flag: "🇧🇪" },
-  { country: "Saudi Arabia", portal: "Qiwa / TVTC", description: "KSA technical and vocational portals", flag: "🇸🇦" },
-  { country: "UAE", portal: "MOHRE / ADVETI", description: "UAE technical employment gateway", flag: "🇦🇪" },
-  { country: "Austria", portal: "AMS Lehrstellenbörse", description: "Public employment service platform", flag: "🇦🇹" },
-  { country: "Switzerland", portal: "lehrstellensuche.ch", description: "National search for training positions", flag: "🇨🇭" },
-  { country: "UK", portal: "Find an apprenticeship (gov.uk)", description: "Official UK apprenticeship service", flag: "🇬🇧" },
-  { country: "Netherlands", portal: "stagemarkt.nl", description: "SBB portal for Dutch vocational training", flag: "🇳🇱" },
-  { country: "France", portal: "1jeune1solution.gouv.fr", description: "Official French youth employment portal", flag: "🇫🇷" },
-  { country: "Ireland", portal: "apprenticeship.ie", description: "National Apprenticeship Service Ireland", flag: "🇮🇪" },
-  { country: "Sweden", portal: "Arbetsförmedlingen", description: "Swedish Public Employment Service", flag: "🇸🇪" },
-  { country: "Norway", portal: "vilbli.no", description: "Norwegian portal for vocational education", flag: "🇳🇴" },
-  { country: "Denmark", portal: "læreplads.dk", description: "Danish apprenticeship matching portal", flag: "🇩🇰" },
-  { country: "Italy", portal: "ANPAL", description: "Italian National Agency for Active Labor Policies", flag: "🇮🇹" },
-  { country: "Spain", portal: "todofp.es", description: "Official Spanish portal for vocational training", flag: "🇪🇸" },
+  { country: "Germany", portal: "ausbildung.de", description: "Central German portal for apprenticeships", flag: "🇩🇪", code: "de" },
+  { country: "Canada", portal: "Job Bank (Apprenticeship)", description: "Official Canadian apprenticeship service", flag: "🇨🇦", code: "ca" },
+  { country: "Belgium", portal: "VDAB / Le Forem", description: "Belgian vocational training portals", flag: "🇧🇪", code: "be" },
+  { country: "Saudi Arabia", portal: "Qiwa / TVTC", description: "KSA technical and vocational portals", flag: "🇸🇦", code: "sa" },
+  { country: "UAE", portal: "MOHRE / ADVETI", description: "UAE technical employment gateway", flag: "🇦🇪", code: "ae" },
+  { country: "Austria", portal: "AMS Lehrstellenbörse", description: "Public employment service platform", flag: "🇦🇹", code: "at" },
+  { country: "Switzerland", portal: "lehrstellensuche.ch", description: "National search for training positions", flag: "🇨🇭", code: "ch" },
+  { country: "UK", portal: "Find an apprenticeship (gov.uk)", description: "Official UK apprenticeship service", flag: "🇬🇧", code: "gb" },
+  { country: "Netherlands", portal: "stagemarkt.nl", description: "SBB portal for Dutch vocational training", flag: "🇳🇱", code: "nl" },
+  { country: "France", portal: "1jeune1solution.gouv.fr", description: "Official French youth employment portal", flag: "🇫🇷", code: "fr" },
+  { country: "Ireland", portal: "apprenticeship.ie", description: "National Apprenticeship Service Ireland", flag: "🇮🇪", code: "ie" },
+  { country: "Sweden", portal: "Arbetsförmedlingen", description: "Swedish Public Employment Service", flag: "🇸🇪", code: "se" },
+  { country: "Norway", portal: "vilbli.no", description: "Norwegian portal for vocational education", flag: "🇳🇴", code: "no" },
+  { country: "Denmark", portal: "læreplads.dk", description: "Danish apprenticeship matching portal", flag: "🇩🇰", code: "dk" },
+  { country: "Italy", portal: "ANPAL", description: "Italian National Agency for Active Labor Policies", flag: "🇮🇹", code: "it" },
+  { country: "Spain", portal: "todofp.es", description: "Official Spanish portal for vocational training", flag: "🇪🇸", code: "es" },
 ];
 
 export const MOCK_JOBS: JobListing[] = [

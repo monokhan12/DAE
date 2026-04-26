@@ -124,6 +124,7 @@ const VisionBoard: React.FC = () => {
                   src={imageUrl} 
                   alt="Career Vision" 
                   className="w-full h-full object-cover animate-in fade-in zoom-in duration-1000"
+                  referrerPolicy="no-referrer"
                 />
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-12">

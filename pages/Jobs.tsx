@@ -208,7 +208,7 @@ const Jobs: React.FC = () => {
                     )}
                     <div className="flex flex-col md:flex-row gap-6 md:items-center">
                       <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
-                        <img src={job.logo || 'https://images.unsplash.com/photo-1590674116497-606233ca0f9b?auto=format&fit=crop&q=80&w=200'} alt={job.company} className="w-full h-full object-cover" />
+                        <img src={job.logo || 'https://images.unsplash.com/photo-1590674116497-606233ca0f9b?auto=format&fit=crop&q=80&w=200'} alt={job.company} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                       
                       <div className="flex-grow">

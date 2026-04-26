@@ -195,9 +195,17 @@ const AbroadPath: React.FC = () => {
                     
                     <div className="flex justify-between items-start mb-6 relative z-10">
                       <div className="flex flex-col">
-                        <span className="bg-slate-100 text-slate-500 text-[9px] font-extrabold px-2 py-1 rounded uppercase tracking-widest w-fit mb-3 border border-slate-200">
-                          {opp.location}
-                        </span>
+                        <div className="flex items-center gap-2 mb-3">
+                          <img 
+                            src={`https://flagcdn.com/w40/${(ABROAD_PORTALS.find(p => p.country === opp.country)?.code || 'eu')}.png`} 
+                            alt={opp.country}
+                            className="w-5 h-3.5 object-cover rounded-sm shadow-sm"
+                            referrerPolicy="no-referrer"
+                          />
+                          <span className="bg-slate-100 text-slate-500 text-[9px] font-extrabold px-2 py-1 rounded uppercase tracking-widest border border-slate-200">
+                            {opp.location}
+                          </span>
+                        </div>
                         <h4 className="text-xl font-extrabold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors">
                           {opp.title}
                         </h4>

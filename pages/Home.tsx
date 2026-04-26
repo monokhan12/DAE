@@ -204,7 +204,7 @@ const Home: React.FC = () => {
               <div className="relative group">
                  <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-[3.5rem] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000"></div>
                  <div className="relative bg-slate-900 p-4 rounded-[3.5rem] border border-white/10 overflow-hidden shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=1200" className="w-full aspect-[4/3] object-cover rounded-[2.5rem] opacity-60 group-hover:opacity-100 transition-opacity duration-700" alt="Technical Visualization" />
+                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=1200" className="w-full aspect-[4/3] object-cover rounded-[2.5rem] opacity-60 group-hover:opacity-100 transition-opacity duration-700" alt="Technical Visualization" referrerPolicy="no-referrer" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent flex items-end p-12">
                        <div className="w-full">
                           <div className="flex items-center gap-2 mb-4">

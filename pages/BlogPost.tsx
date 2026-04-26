@@ -47,6 +47,7 @@ const BlogPost: React.FC = () => {
             src={post.image} 
             alt={post.title} 
             className="w-full h-full object-cover opacity-40"
+            referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
         </div>

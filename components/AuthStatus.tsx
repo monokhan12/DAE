@@ -28,7 +28,7 @@ const AuthStatus: React.FC = () => {
         </Link>
         <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
           <div className="relative group">
-            <img src={user.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} alt={user.displayName || 'User'} className="w-9 h-9 rounded-xl border-2 border-white shadow-sm group-hover:border-blue-100 transition-all" />
+            <img src={user.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} alt={user.displayName || 'User'} className="w-9 h-9 rounded-xl border-2 border-white shadow-sm group-hover:border-blue-100 transition-all" referrerPolicy="no-referrer" />
             <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
           </div>
           <div className="hidden lg:block">
