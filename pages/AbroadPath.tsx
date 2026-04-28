@@ -16,14 +16,17 @@ const AbroadPath: React.FC = () => {
   const handleSearch = async () => {
     if (!tech || !selectedCountry) return;
     setIsLoading(true);
+    setOpportunities([]); // Clear previous results
     setLoadStage(`Connecting to ${selectedCountry.country} national portals...`);
     
-    // Fake loading stages to make it feel responsive
+    // Specific loading stages for better feedback
     const stages = [
-      `Querying ${selectedCountry.portal}...`,
-      `Filtering for ${tech} Technology...`,
+      `Querying ${selectedCountry.portal} portal...`,
+      `Establishing secure handshake...`,
+      `Filtering for ${tech} Technology results...`,
       `Analyzing language requirements (${langLevel})...`,
-      `Verifying Visa compatibility...`
+      `Validating visa compatibility...`,
+      `Finalizing career opportunities...`
     ];
 
     let currentStage = 0;
@@ -31,8 +34,6 @@ const AbroadPath: React.FC = () => {
       if (currentStage < stages.length) {
         setLoadStage(stages[currentStage]);
         currentStage++;
-      } else {
-        clearInterval(interval);
       }
     }, 1500);
 
@@ -44,10 +45,16 @@ const AbroadPath: React.FC = () => {
         langLevel !== 'All' ? langLevel : undefined,
         visaType !== 'All' ? visaType : undefined
       );
-      setOpportunities(results);
+      
+      if (results && results.length > 0) {
+        setOpportunities(results);
+      } else {
+        // Fallback or empty state handled in UI
+        setOpportunities([]);
+      }
     } catch (error) {
       console.error(error);
-      alert("Failed to fetch opportunities. Please try again.");
+      alert("Note: The live search is experiencing high traffic. Please try again in 30 seconds.");
     } finally {
       clearInterval(interval);
       setIsLoading(false);

@@ -155,9 +155,11 @@ export const NAV_LINKS = [
     subLinks: [
       { label: 'Jobs in Pakistan', path: '/jobs/pakistan' },
       { label: 'Jobs Abroad', path: '/jobs/abroad' },
+      { label: 'Germany Ausbildung', path: '/jobs/germany-ausbildung' },
       { label: 'Post a Job', path: '/jobs/post' }
     ]
   },
+  { label: 'Jobs Abroad', path: '/jobs/abroad' },
   { label: 'Higher Studies', path: '/higher-studies' },
   { label: 'AI Tools', path: '/ai-tools' },
   { label: 'Mentor', path: '/mentor' },

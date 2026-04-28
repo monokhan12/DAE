@@ -333,12 +333,21 @@ export const getMentorResponse = async (userMessage: string): Promise<MentorResp
 
 export const searchGermanAusbildung = async (technology: string): Promise<GermanOpportunity[]> => {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  const prompt = `Find 5 current Ausbildung (vocational training) positions in Germany for ${technology} technology from ausbildung.de. 
-  Provide results as a JSON array.`;
+  const prompt = `Act as an expert career guide for international students. Search ausbildung.de, meinestatistik.de and other official German sources for current "Ausbildung" (vocational training/apprenticeship) positions in Germany for the ${technology} sector.
+
+Requirements for each listing:
+- Title of the Ausbildung
+- Specific city in Germany
+- Company name offering the position
+- Minimum Language Level required (usually B1 or B2)
+- Brief summary of the training
+- Direct link to apply or view the source
+
+Return the result as a detailed JSON array of 5 active matching positions. If no specific technology matches are found, look for general technical Apprenticeships for technical students.`;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-2.0-flash-001',
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }],
@@ -361,8 +370,14 @@ export const searchGermanAusbildung = async (technology: string): Promise<German
       }
     });
 
-    return JSON.parse(response.text || "[]");
+    const textResult = response.text || "[]";
+    const sanitizedText = textResult.includes('```json') 
+      ? textResult.split('```json')[1].split('```')[0].trim()
+      : textResult.trim();
+
+    return JSON.parse(sanitizedText || "[]");
   } catch (error) {
+    console.error("German search failed:", error);
     return [];
   }
 };
@@ -376,14 +391,29 @@ export const searchAbroadOpportunities = async (
 ): Promise<EuroOpportunity[]> => {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   
-  // Refined prompt for speed - less chatty, more directive.
-  const prompt = `SEARCH ${portal} FOR ${technology} VOCATIONAL/APPRENTICESHIP/TECHNICAL POSITIONS IN ${country}. 
-  FILTER: LANGUAGE ${languageLevel || 'ANY'}, VISA ${visaType || 'ANY'}. 
-  OUTPUT JSON ARRAY OF 5 BEST MATCHES.`;
+  const prompt = `Act as a specialized international technical recruiter. Search the national job portal "${portal}" and other reputable sources for current job openings, apprenticeships, or vocational training positions in ${country} specifically for ${technology} technology professionals or students.
+
+Filters to apply during search:
+- Targeted Field: ${technology}
+- Required Language Level: ${languageLevel || 'Any'}
+- Visa Consideration: ${visaType || 'Any'}
+
+Search for live, active listings. For each result, provide:
+1. Job Title
+2. Specific Location in ${country}
+3. Company Name
+4. Language Requirement (e.g., "B1 German", "English")
+5. Brief Description (tech stack, role)
+6. Direct Link to the job portal or company site
+7. Country name
+8. Source Portal Name
+9. Visa type (if specified)
+
+Return the results as a JSON array of up to 5 matching opportunities. If no specific results are found for the portal, search broadly for ${technology} jobs in ${country} for international applicants.`;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-2.0-flash-001',
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }],
@@ -409,8 +439,16 @@ export const searchAbroadOpportunities = async (
       }
     });
 
-    return JSON.parse(response.text || "[]");
+    const textResult = response.text || "[]";
+    // Try to sanitize if it's not pure JSON (sometimes models add markdown wrappers)
+    const sanitizedText = textResult.includes('```json') 
+      ? textResult.split('```json')[1].split('```')[0].trim()
+      : textResult.trim();
+      
+    return JSON.parse(sanitizedText || "[]");
   } catch (error) {
+    console.error("Abroad search failed:", error);
+    // Return empty array instead of crashing
     return [];
   }
 };

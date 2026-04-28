@@ -12,6 +12,7 @@ import DaeCourses from './pages/DaeCourses';
 import AiMentor from './pages/AiMentor';
 import AiDreamer from './pages/AiDreamer';
 import AbroadPath from './pages/AbroadPath';
+import GermanyPath from './pages/GermanyPath';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import About from './pages/About';
@@ -39,6 +40,7 @@ const App: React.FC = () => {
             <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="/jobs/pakistan" element={<Jobs />} />
             <Route path="/jobs/abroad" element={<AbroadPath />} />
+            <Route path="/jobs/germany-ausbildung" element={<GermanyPath />} />
             <Route path="/jobs/post" element={<PostJob />} />
             <Route path="/higher-studies" element={<HigherStudies />} />
             <Route path="/dae-pakistan" element={<DaeCourses />} />
